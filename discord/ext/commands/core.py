@@ -413,7 +413,9 @@ class Command(_BaseCommand, Generic[CogT, P, T]):
             help_doc = extract_descriptions_from_docstring(func, self.params)
 
         self.help: Optional[str] = help_doc
-
+        self.example: Optional[str] = kwargs.get('example')
+        self.information: Optional[str] = kwargs.get('information')
+        self.notes: Optional[str] = kwargs.get('notes')
         self.brief: Optional[str] = kwargs.get('brief')
         self.usage: Optional[str] = kwargs.get('usage')
         self.rest_is_raw: bool = kwargs.get('rest_is_raw', False)
@@ -511,6 +513,13 @@ class Command(_BaseCommand, Generic[CogT, P, T]):
             globalns = {}
 
         self.params: Dict[str, Parameter] = get_signature_parameters(function, globalns)
+
+    @discord.utils.cached_property
+    def permissions(self) -> Optional[List[str]]:
+        perms = [perm for check in self.checks if getattr(check, '__closure__', None) 
+                for cell in check.__closure__ if isinstance(cell.cell_contents, dict) 
+                for perm, val in cell.cell_contents.items() if val]
+        return perms if perms else None
 
     def add_check(self, func: UserCheck[Context[Any]], /) -> None:
         """Adds a check to the command.
