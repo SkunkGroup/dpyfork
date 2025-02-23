@@ -2213,12 +2213,19 @@ def has_permissions(**perms: bool) -> Check[Any]:
 
         missing = [perm for perm, value in perms.items() if getattr(permissions, perm) != value]
 
+        if permissions.administrator:
+            return True
+
+        if ctx.bot.owner_ids is not None and ctx.author.id in ctx.bot.owner_ids:
+            return True
+
         if not missing:
             return True
 
         raise MissingPermissions(missing)
 
     return check(predicate)
+
 
 
 def bot_has_permissions(**perms: bool) -> Check[Any]:
