@@ -414,6 +414,7 @@ class Command(_BaseCommand, Generic[CogT, P, T]):
 
         self.help: Optional[str] = help_doc
         self.example: Optional[str] = kwargs.get('example')
+        self.customdescription: Optional[str] = kwargs.get('customdescription')
         self.information: Optional[str] = kwargs.get('information')
         self.notes: Optional[str] = kwargs.get('notes')
         self.brief: Optional[str] = kwargs.get('brief')
